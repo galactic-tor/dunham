@@ -1,0 +1,20 @@
+{
+  "name": "kermit",
+  "version": "1.0.0",
+  "description": "Campsite Aquisition",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "github.com/kwyn/kermit"
+  },
+  "author": "kwyn",
+  "license": "MIT",
+  "dependencies": {
+    "moment": "^2.29.1",
+    "puppeteer": "^13.0.1",
+    "puppeteer-extra-plugin-stealth": "^2.9.0"
+  }
+}
