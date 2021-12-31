@@ -1,6 +1,13 @@
+// Load .env file
+require('dotenv').config()
+
+// TODO: Read a job.yaml config
+// TODO: Setup database and website for configuring and listing jobs
+
 // puppeteer-extra is a drop-in replacement for puppeteer,
 // it augments the installed puppeteer with plugin functionality
 const puppeteer = require('puppeteer-extra')
+
 // add stealth plugin and use defaults (all evasion techniques)
 const StealthPlugin = require('puppeteer-extra-plugin-stealth')
 puppeteer.use(StealthPlugin())
@@ -24,7 +31,6 @@ function main() {
 			await browser.close()
 			return
 		}
-		console.log("results", r)
 		// Try checking out if there are sites
 		try {
 			await BookSite(r[0][0], r[0][1])

@@ -13,8 +13,11 @@ build: ## Build the container
 	docker build -t $(APP_NAME) .
 
 run: ## Run container on port configured in `config.env`
-	docker run -i -t --rm --env-file=./config.env -p=$(PORT):$(PORT) --name="$(APP_NAME)" $(APP_NAME)
+	docker run -i -t --rm --env-file=./.env -p=$(PORT):$(PORT) --name="$(APP_NAME)" $(APP_NAME)
 
 run-local: 
-	export $(grep -v '^#' config.env | xargs -0) && \
+	export $(grep -v '^#' .env | xargs -0) && \
 	node index.js
+
+puppeteer-base:
+	docker build -f ./Dockerfiles/puppeteer.dockerfile -t docker.io/kwyn/puppeteer ./Dockerfiles

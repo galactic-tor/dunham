@@ -14,7 +14,9 @@
   "license": "MIT",
   "dependencies": {
     "moment": "^2.29.1",
-    "puppeteer": "^13.0.1",
     "puppeteer-extra-plugin-stealth": "^2.9.0"
+  },
+  "devDependencies":{
+    "puppeteer": "^13.0.1"
   }
 }
