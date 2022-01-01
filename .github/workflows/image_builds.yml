@@ -40,7 +40,7 @@ jobs:
           docker push docker.io/kwyn/puppeteer
       -
         name: build dunham
-        if: contains(steps.changed-files.outputs.all_changed_files, 'Dockerfiles/puppeteer.dockerfile') || contains(steps.changed-files.outputs.all_changed_files, 'Dockerfiles/puppeteer.dockerfile')
+        if: contains(steps.changed-files.outputs.all_changed_files, 'Dockerfiles/puppeteer.dockerfile') || contains(steps.changed-files.outputs.all_changed_files, 'Dockerfiles/dunham.dockerfile')
         env:
           PW: ${{ secrets.DOCKERHUB_PW}}
         run: |

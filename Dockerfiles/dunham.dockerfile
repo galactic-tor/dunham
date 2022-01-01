@@ -1,8 +1,8 @@
 FROM docker.io/kwyn/puppeteer:latest
 
-COPY . /workspace
+COPY . /home/pptruser/workspace
 
-WORKDIR /workspace
+WORKDIR /home/pptruser/workspace
 
 USER pptruser
 
