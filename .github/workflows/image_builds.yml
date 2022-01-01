@@ -35,6 +35,7 @@ jobs:
         env:
           PW: ${{ secrets.DOCKERHUB_PW}}
         run: |
+          echo "platforms ${{ steps.buildx.outputs.platforms }}"
           docker login --username kwyn --password "$PW"
           docker build -f ./Dockerfiles/puppeteer.dockerfile -t docker.io/kwyn/puppeteer:$GITHUB_SHA  -t docker.io/kwyn/puppeteer:latest .
           docker push docker.io/kwyn/puppeteer
