@@ -1,0 +1,23 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: dunham-cron
+spec:
+  schedule: "*/10 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: dunham
+            image: docker.io/kwyn/dunham:fffa10b7945240acef72b2227c1c4186c4c22a93
+            imagePullPolicy: IfNotPresent
+          restartPolicy: Never
+          volumeMounts:
+            - name: .env
+              mountPath: "/home/pptruser/workspace/"
+              readOnly: true
+          volumes:
+          - name: .env
+            secret:
+              secretName: dunham.env

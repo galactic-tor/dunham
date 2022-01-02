@@ -21,3 +21,12 @@ run-local:
 
 puppeteer-base:
 	docker build -f ./Dockerfiles/puppeteer.dockerfile -t docker.io/kwyn/puppeteer ./Dockerfiles
+
+seal-prod-env:
+	kubectl create secret generic dunham.env --namespace=dunham-prod --dry-run=client --from-file .env -o json > .env-secret.json && \
+	kubeseal --format=yaml < .env-secret.json > ./deploy/sealed-env-prod.yaml
+
+seal-dev-env:
+	kubectl create secret generic dunham.env --namespace=dunham-dev --dry-run=client --from-file .env -o json > .env-secret.json && \
+	kubeseal --format=yaml < .env-secret.json > ./deploy/sealed-env-dev.yaml
+

@@ -1,0 +1,16 @@
+apiVersion: bitnami.com/v1alpha1
+kind: SealedSecret
+metadata:
+  creationTimestamp: null
+  name: dunham.env
+  namespace: dunham-dev
+spec:
+  encryptedData:
+    .env: AgASLy9i2FbdCK0AO1QrDhqhzQkWc9HO2RaSjy8dly98bfdchwsA3M9PE4gh3kanAJv8Zi2HpJgZTp33e9RV6Iuv9wrfDTc+sYKNwwE8UL7VczYpfeljC90+QdZF3V8FquVeV1Pi2PZMh7Qvf8TFi5+99yBgo8NqFkUQLO6OZJpYIxCjdMgh6XSDSVopg4CFZqirmNYtTDnR0usrtyf7OXfCeLG+yvHfMQ7qFTsnobF6LgNUDYzTK6OnqHUzQB+hjL7sZ7f/RCCyAgR4cftodSpnTViDF5xDLsspWU3dVi3dyLeRDlaflQBQyPhf2L0Rj4oWRzikn55RU+2YKgJO8dVGK7AtUONK60b5rsKVNeubWjxChgUASizq69bpGIj0GFki0yx7VlAeQ9bnEoSpFaMDRhZWKFs/pf2VJp1J+wB5Wwj5sswby+vw6HlU2ZCxvcSHYYdKF+Nc8Fyd3A3wuB+B81N3WV6JeV6dreguDh+yVUUfsgj7UUZUxnvWwVkoHhb4gk/dgIhalJH8QKFAnOKusebWpBM8AaNzQl+zq0dGywb5JW0/pxldoLAGJd4RIUXI9eOAZh0ltXujEMRAyi6Wy/pSVTL3+K1GuNmlbieyEdPOCfCO8LA6TS0Wx99225gAVJY20tzfmauoM14Wj9FtAYUEsdWqpHSbOxArlARSJp7F4RsLmaCDLLSc/3H1xRc8U7JjirSXYSOlN+HN9iq0ELnXzRwHsxd3r4vba/HCwLUTz7zm1HogdyryCMOA17958TGZDqsBudKrsi/1o2H+4LKhpb8SBI0gEzSItggjIui29rMuzcvm4EQpz3iUve/pnXN2urnfQZFOO+nHsjrLr19RWHrNT1JfLo/InF6nzHpM9wno9XremFEiXW3/5wjZCTgniwDHWu/yC/MICtsW+BF3Y+Kc8xriaUvUxPzQgBAMkWnxCisCJw8rsZnQ0QkWq53OcwR4zvhLfB4Acx/HNkeMipYzBlj3boLYv7BqQbYffhF4S/Bo2a7wLnK2ESbq9ST43po1LjYjQSg2chglRh/Oab1JfaJoUPeoSoiW2ko1gr9O
+  template:
+    data: null
+    metadata:
+      creationTimestamp: null
+      name: dunham.env
+      namespace: dunham-dev
+

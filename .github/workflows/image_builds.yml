@@ -16,7 +16,8 @@ jobs:
         name: Get changed files
         id: changed-files
         uses: tj-actions/changed-files@v12.2
-      - name: List all changed files
+      - 
+        name: List all changed files
         run: |
           for file in ${{ steps.changed-files.outputs.all_changed_files }}; do
             echo "$file was changed"
@@ -48,10 +49,3 @@ jobs:
           contains(steps.changed-files.outputs.all_changed_files, '.github/workflows/image_builds.yml'))
         run: |
           docker build --platform linux/arm64,linux/amd64 --push --file ./Dockerfiles/puppeteer.dockerfile --tag docker.io/kwyn/puppeteer:$GITHUB_SHA  --tag docker.io/kwyn/puppeteer:latest .
-      -
-        name: build Dockerfiles/dunham.dockerfile
-        if: |
-          (contains(steps.changed-files.outputs.all_changed_files, 'Dockerfiles/puppeteer.dockerfile') ||
-          contains(steps.changed-files.outputs.all_changed_files, '.github/workflows/image_builds.yml'))
-        run: |
-          docker build --platform linux/arm64,linux/amd64 --push --file ./Dockerfiles/dunham.dockerfile --tag docker.io/kwyn/dunham:$GITHUB_SHA .

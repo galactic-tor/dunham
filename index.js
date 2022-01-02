@@ -13,7 +13,10 @@ const StealthPlugin = require('puppeteer-extra-plugin-stealth')
 puppeteer.use(StealthPlugin())
 
 function main() {
-	puppeteer.launch({ headless: process.env.HEADLESS}).then(async browser => {
+	puppeteer.launch({ 
+        headless: process.env.HEADLESS,
+        executablePath: "chromium-browser"
+    }).then(async browser => {
 		const sites = process.env.SITES.split(' ')
 		const siteCheckers = sites.map((site) => CheckSite(browser, site))
 	    const results = await Promise.allSettled(siteCheckers)
