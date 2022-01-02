@@ -7,17 +7,20 @@ spec:
   jobTemplate:
     spec:
       template:
+        metadata:
+          labels: 
+            name: dunham-cron
         spec:
           containers:
-          - name: dunham
-            image: docker.io/kwyn/dunham
-            imagePullPolicy: IfNotPresent
+            - name: dunham
+              image: docker.io/kwyn/dunham
+              imagePullPolicy: IfNotPresent
+              volumeMounts:
+              - name: dunham-dot-env
+                mountPath: "/home/pptruser/workspace/"
+                readOnly: true
           restartPolicy: Never
-          volumeMounts:
-            - name: .env
-              mountPath: "/home/pptruser/workspace/"
-              readOnly: true
           volumes:
-          - name: .env
+          - name: dunham-dot-env
             secret:
               secretName: dunham.env
