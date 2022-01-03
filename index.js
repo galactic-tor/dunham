@@ -1,12 +1,15 @@
-// Load .env file
-require('dotenv').config()
-
-// TODO: Read a job.yaml config
-// TODO: Setup database and website for configuring and listing jobs
-
 // puppeteer-extra is a drop-in replacement for puppeteer,
 // it augments the installed puppeteer with plugin functionality
 const puppeteer = require('puppeteer-extra')
+const path = require("path")
+
+const result = require('dotenv').config({
+    path: path.resolve(process.cwd(), 'secrets/.env')
+})
+
+if (result.error) {
+  throw result.error
+}
 
 // add stealth plugin and use defaults (all evasion techniques)
 const StealthPlugin = require('puppeteer-extra-plugin-stealth')
@@ -16,6 +19,9 @@ function main() {
 	puppeteer.launch({ 
         headless: process.env.HEADLESS,
         executablePath: "chromium",
+        // Some of the page is slow to render this reduces flakiness.
+        // Instead of waiting for element functions which seems to break entirely sometimes.
+        slowMo: 250, 
         args: ['--no-sandbox', '--disable-setuid-sandbox'], // *crys in arm64 and linux containers*
     }).then(async browser => {
 		const sites = process.env.SITES.split(' ')

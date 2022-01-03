@@ -19,7 +19,7 @@ spec:
               imagePullPolicy: IfNotPresent
               volumeMounts:
               - name: dunham-dot-env
-                mountPath: "/home/pptruser/workspace/"
+                mountPath: "/home/pptruser/workspace/secrets/"
                 readOnly: true
           restartPolicy: Never
           volumes:
