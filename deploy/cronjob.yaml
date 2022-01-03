@@ -15,8 +15,9 @@ spec:
         spec:
           containers:
             - name: dunham
-              image: docker.io/kwyn/dunham
-              imagePullPolicy: IfNotPresent
+              image: docker.io/kwyn/dunham:latest
+              imagePullPolicy: Always
+              # imagePullPolicy:IfNotPresent
               volumeMounts:
               - name: dunham-dot-env
                 mountPath: "/home/pptruser/workspace/"
