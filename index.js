@@ -15,7 +15,8 @@ puppeteer.use(StealthPlugin())
 function main() {
 	puppeteer.launch({ 
         headless: process.env.HEADLESS,
-        executablePath: "chromium-browser"
+        executablePath: "chromium",
+        args: ['--no-sandbox', '--disable-setuid-sandbox'], // *crys in arm64 and linux containers*
     }).then(async browser => {
 		const sites = process.env.SITES.split(' ')
 		const siteCheckers = sites.map((site) => CheckSite(browser, site))
