@@ -31,7 +31,7 @@ function main() {
 			if (result.status=="fulfilled") {
 				collector.push(result.value)
 			} else {
-				console.error("no sites found", result.reason)
+				console.error("no sites found ", result.reason)
 			}
 			return collector
 		}, [])
@@ -59,7 +59,7 @@ async function CheckSite(browser, site) {
 	const availableElements = await findAvailable(page)
 	if (availableElements.length < 1) {
 		page.close()
-		return Promise.reject(new Error("No sites found"))
+		return Promise.reject(new Error(`No sites found for ${site}`))
 	}
 	return Promise.resolve([page, availableElements]);
 }
