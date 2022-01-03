@@ -68,5 +68,6 @@ jobs:
         manifests: |
           deploy/sealed-env-dev.yaml
           deploy/cronjob.yaml
-        images: 'docker.io/kwyn/dunham:$GITHUB_SHA'
+        images: |
+          'docker.io/kwyn/dunham:${{ github.sha }}'
         kubectl-version: 'latest'
