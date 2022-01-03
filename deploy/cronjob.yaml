@@ -4,6 +4,8 @@ metadata:
   name: dunham-cron
 spec:
   schedule: "*/10 * * * *"
+  successfulJobsHistoryLimit: 5
+  failedJobsHistoryLimit: 5
   jobTemplate:
     spec:
       template:
