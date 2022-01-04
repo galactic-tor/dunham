@@ -18,11 +18,6 @@ config.puppeteer = {
     args: JSON.parse(Buffer.from("WyItLW5vLXNhbmRib3giLCAiLS1kaXNhYmxlLXNldHVpZC1zYW5kYm94Il0K", "base64").toString())
 }
 
-console.log(config.puppeteer)
-
-localPuppeteer = { headless: false }
-config.puppeteer = localPuppeteer
-
 config.urls.base = Buffer.from("aHR0cHM6Ly93d3cucmVjcmVhdGlvbi5nb3YvY2FtcGluZy9jYW1wZ3JvdW5kcy8K", "base64").toString()
 
 config.sites = require("../configmaps/sites.json");
