@@ -1,0 +1,53 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: dunham-cron
+spec:
+  schedule: "*/10 * * * *"
+  successfulJobsHistoryLimit: 5
+  failedJobsHistoryLimit: 5
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels: 
+            name: dunham-cron
+        spec:
+          containers:
+            - name: dunham
+              image: docker.io/kwyn/dunham:latest
+              imagePullPolicy: IfNotPresent
+              volumeMounts:
+              - name: dunham-dot-env
+                mountPath: "/home/pptruser/workspace/secrets/"
+                readOnly: true
+              - name: may-14th-config
+                mountPath: "/home/pptruser/workspace/configmaps/"
+          restartPolicy: Never
+          volumes:
+          - name: dunham-dot-env
+            secret:
+              secretName: dunham.env
+          - name: may-14th-config
+            configMap:
+              name: may-14th-config
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  label: 
+    name: dunham-cron
+  name: may-14th-config
+data:
+  sites.json: |
+    [
+      "Upper Pines",
+      "Lower Pines",
+      "North Pines"
+    ]
+  dates.json: |
+    {
+      "start": "05/14/2021",
+      "end": "05/15/2021"
+    }
+
