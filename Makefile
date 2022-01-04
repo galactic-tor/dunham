@@ -23,7 +23,7 @@ puppeteer-base:
 	docker build -f ./Dockerfiles/puppeteer.dockerfile -t docker.io/kwyn/puppeteer ./Dockerfiles
 
 seal-prod-env:
-	kubectl create secret generic dunham.env --namespace=dunham-prod --dry-run=client --from-file secrets/.env -o json > .env-secret.json && \
+	kubectl create secret generic dunham.env --namespace=dunham-prod --dry-run=client --from-file secrets/.env -o json > secrets/.env-secret.json && \
 	kubeseal --format=yaml < secrets/.env-secret.json > ./deploy/sealed-env-prod.yaml
 
 seal-dev-env:
