@@ -13,7 +13,7 @@ config.dates = {};
 
 config.puppeteer = {
 	headless: true,
-	executablepath: "chromium",
+	executablePath: "chromium",
 	// *crys in arm64 and linux containers*
     args: JSON.parse(Buffer.from("WyItLW5vLXNhbmRib3giLCAiLS1kaXNhYmxlLXNldHVpZC1zYW5kYm94Il0K", "base64").toString())
 }
