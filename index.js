@@ -1,8 +1,9 @@
 // puppeteer-extra is a drop-in replacement for puppeteer,
 // it augments the installed puppeteer with plugin functionality
 const puppeteer = require('puppeteer-extra')
+const Push = require( 'pushover-notifications' )
 const path = require("path")
-
+const config = require ("./config")
 const result = require('dotenv').config({
     path: path.resolve(process.cwd(), 'secrets/.env')
 })
@@ -16,16 +17,8 @@ const StealthPlugin = require('puppeteer-extra-plugin-stealth')
 puppeteer.use(StealthPlugin())
 
 function main() {
-	puppeteer.launch({ 
-        headless: process.env.HEADLESS,
-        executablePath: "chromium",
-        // Some of the page is slow to render this reduces flakiness.
-        // Instead of waiting for element functions which seems to break entirely sometimes.
-        slowMo: 250, 
-        args: ['--no-sandbox', '--disable-setuid-sandbox'], // *crys in arm64 and linux containers*
-    }).then(async browser => {
-		const sites = process.env.SITES.split(' ')
-		const siteCheckers = sites.map((site) => CheckSite(browser, site))
+	puppeteer.launch(config.puppeteer).then(async browser => {
+		const siteCheckers = config.sites.map((site) => CheckSite(browser, site))
 	    const results = await Promise.allSettled(siteCheckers)
 		const r = results.reduce((collector, result) => {
 			if (result.status=="fulfilled") {
@@ -39,29 +32,46 @@ function main() {
 		if (r.length < 1) {
 			console.log("No sites found across all grounds")
 			await browser.close()
-			return
+			return 
 		}
+
 		// Try checking out if there are sites
 		try {
-			await BookSite(r[0][0], r[0][1])
+			await BookSite(r[0].page, r[0].availableElements)
 		} catch (error) {
-			console.error("failed to book site", error)
+            return Promise.reject(new Error(`failed to book site: ${error}`))
 		}
+        notify(config.dates.start) 
 	})
+}
+
+async function notify(date) {
+    var p = new Push( {
+        user: process.env.PUSHOVER_USER,
+        token: process.env.PUSHOVER_TOKEN,
+    })
+    
+    var msg = {
+        message: `Campsite acquired for ${date}`,
+        title: "⛺ Campsite Snagged!",
+        sound: 'climb'
+    }
+    
+    return p.send(msg)
 }
 
 async function CheckSite(browser, site) {
 	const page = await browser.newPage();
-	await page.goto(process.env.URL+site);
+	await page.goto(config.urls.base+config.siteMap[site]);
 	await closeModal(page);
 	await campsiteListView(page);
-	await setDates(page, process.env.START_DATE, process.env.END_DATE);
+	await setDates(page, config.dates.start, config.dates.end);
 	const availableElements = await findAvailable(page)
 	if (availableElements.length < 1) {
 		page.close()
 		return Promise.reject(new Error(`No sites found for ${site}`))
 	}
-	return Promise.resolve([page, availableElements]);
+	return Promise.resolve({site, page, availableElements});
 }
 
 async function BookSite(page, siteElements) {
@@ -120,7 +130,7 @@ async function findAvailable(page) {
 }
 
 async function login(page, email, pw) {
-    const loginBtn = await page.waitForSelector('.rec-acct-sign-in-btn', {timeout:4000})
+    const loginBtn = await page.waitForSelector('.rec-acct-sign-in-btn', {timeout:10000})
     const emailField = await page.$('#email')
     const pwField = await page.$('#rec-acct-sign-in-password')
     await emailField.click()
@@ -129,7 +139,6 @@ async function login(page, email, pw) {
     await pwField.type(pw)
     const navPromise = page.waitForNavigation()
     await loginBtn.click()
-    await navPromise
 }
 
 async function fillYosCampsiteField(page) {

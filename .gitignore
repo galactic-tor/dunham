@@ -2,3 +2,4 @@
 .secret.yaml
 node_modules/*
 secrets
+configmaps
