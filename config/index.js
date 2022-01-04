@@ -18,11 +18,9 @@ config.puppeteer = {
     args: JSON.parse(Buffer.from("WyItLW5vLXNhbmRib3giLCAiLS1kaXNhYmxlLXNldHVpZC1zYW5kYm94Il0K", "base64").toString())
 }
 
-config.urls.base = Buffer.from("aHR0cHM6Ly93d3cucmVjcmVhdGlvbi5nb3YvY2FtcGluZy9jYW1wZ3JvdW5kcy8K", "base64").toString()
+config.urls.base = Buffer.from("aHR0cHM6Ly93d3cucmVjcmVhdGlvbi5nb3YvY2FtcGluZy9jYW1wZ3JvdW5kcy8=").toString()
 
 config.sites = require("../configmaps/sites.json");
 config.dates = require("../configmaps/dates.json")
-
-console.log(config)
 
 module.exports = config;

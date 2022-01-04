@@ -90,8 +90,6 @@ async function BookSite(page, siteElements) {
 		process.env.EXP_MONTH,
 		process.env.EXP_YEAR
 	);
-	await page.screenshot({ path: 'testresult.png', fullPage: true })
-	console.log(`All done, check the screenshot. ✨`)
 	return Promise.resolve("site booked")
 }
 
