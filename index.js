@@ -19,6 +19,7 @@ if (result.error) {
 // add stealth plugin and use defaults (all evasion techniques)
 const StealthPlugin = require('puppeteer-extra-plugin-stealth')
 puppeteer.use(StealthPlugin())
+
 function main() {
 	puppeteer.launch(config.puppeteer).then(async browser => {
 		const siteCheckers = config.sites.map((site) => CheckSite(browser, site))
@@ -52,7 +53,7 @@ function main() {
         try {
             await notify(config.dates.start) 
         } catch (error) {
-            log.error('failed to send push notification', {error})
+            log.error('failed to send push notification', errorCtx(error))
         }
 	})
 }
@@ -87,9 +88,22 @@ async function CheckSite(browser, site) {
         }
 	    return Promise.resolve({site, page, availableElements});
     } catch (error) {
-        log.error('unexpected error checking for sites', {site, error})
-        return Promise.reject(`unexpected error ${error}`)
+        log.error('unexpected error checking for sites', errorCtx(error, {site}))
+        return Promise.reject(`unexpected error $errorCtx(error)`)
     }
+}
+
+function errorCtx(error, ctx) {
+    if (ctx == undefined) {
+        ctx = {}
+    }
+    if (error instanceof Error) {
+        ctx.stack= error.stack;
+        ctx.error = error.message
+    } else {
+        ctx.error = String(error)
+    }
+    return ctx 
 }
 
 async function BookSite(page, siteElements) {
@@ -111,7 +125,7 @@ async function BookSite(page, siteElements) {
         );
 	    return Promise.resolve("site booked")
     } catch (error) {
-        log.error("BookSite failed", {error})
+        log.error("BookSite failed", errorCtx(error))
         return Promise.reject(error)
     }
 	
@@ -124,7 +138,7 @@ async function closeModal(page) {
             await button.click();
         }
     } catch (error) {
-        log.error('closeModal failed', {error})
+        log.error('closeModal failed', errorCtx(error))
         return Promise.reject(error)
     }
     
@@ -138,7 +152,7 @@ async function campsiteListView(page) {
         }
         await button.click();
    } catch (error) {
-       log.error('campsiteListView failed', {error})
+       log.error('campsiteListView failed', errorCtx(error))
        return Promise.reject(error)
    }
 }
@@ -156,7 +170,7 @@ async function setDates(page, start, end) {
         await endField.click()
         await endField.type(end)
     } catch (error) {
-        log.error('setDates failed', {error})
+        log.error('setDates failed', errorCtx(error))
         return Promise.reject(error)
     }
 }
@@ -167,10 +181,9 @@ async function findAvailable(page) {
         const selector = '.list-map-book-now-button-tracker'
         return page.$$(selector)
     } catch (error) {
-        log.error('findAvailable failed', {error})
+        log.error('findAvailable failed', errorCtx(error))
         return Promise.reject(error)
     }
-	
 }
 
 async function login(page, email, pw) {
@@ -186,7 +199,7 @@ async function login(page, email, pw) {
         await loginBtn.click()
         await navPromise
     } catch (error) {
-        log.error('login failed', {error})
+        log.error('login failed', errorCtx(error))
         return Promise.reject(error)
     }
 }
@@ -208,7 +221,7 @@ async function fillYosCampsiteField(page) {
         await submit.click()
         await navPromise
     } catch (error) {
-        log.error('fillYosCampsiteField failed', {error})
+        log.error('fillYosCampsiteField failed', errorCtx(error))
         return Promise.reject()
     }
 }
@@ -239,7 +252,7 @@ async function checkout(page, name, ccn, cvc, expmon, expyr) {
         await page.click('.sarsa-button.ml-1.sarsa-button-primary.sarsa-button-md')
         await navPromise2
     } catch (error) {
-        log.error('checkout failed', {error})
+        log.error('checkout failed', errorCtx(error))
         return Promise.reject(error)
     }
     
