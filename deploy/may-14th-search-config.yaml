@@ -17,6 +17,9 @@ spec:
             - name: dunham
               image: docker.io/kwyn/dunham:latest
               imagePullPolicy: IfNotPresent
+              env:
+              - name: NODE_ENV
+                value: "production"
               volumeMounts:
               - name: dunham-dot-env
                 mountPath: "/home/pptruser/workspace/secrets/"

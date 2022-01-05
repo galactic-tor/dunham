@@ -23,6 +23,4 @@ config.urls.base = Buffer.from("aHR0cHM6Ly93d3cucmVjcmVhdGlvbi5nb3YvY2FtcGluZy9j
 config.sites = require("../configmaps/sites.json");
 config.dates = require("../configmaps/dates.json");
 
-console.log(config);
-
 module.exports = config;

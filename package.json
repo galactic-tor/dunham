@@ -16,7 +16,8 @@
     "dotenv": "^10.0.0",
     "puppeteer-extra": "^3.2.3",
     "puppeteer-extra-plugin-stealth": "^2.9.0",
-    "pushover-notifications": "^1.2.2"
+    "pushover-notifications": "^1.2.2",
+    "winston": "^3.3.3"
   },
   "devDependencies": {
     "puppeteer": "^13.0.1"
