@@ -7,9 +7,16 @@ const productionTransport = new winston.transports.Console({
 });
 
 const prettyTransport = new winston.transports.Console({
+	level: 'info',
     stderrLevels: ['error'],
     format: winston.format.prettyPrint(),
 	handleExceptions: true,
+})
+
+const debugFileTransport = new winston.transports.File({
+	level: 'debug',
+	filename: 'debug.log',
+	format: winston.format.json()
 })
 
 const logger = winston.createLogger({
@@ -19,6 +26,7 @@ const logger = winston.createLogger({
 
 if (process.env.NODE_ENV !== 'production') {
     logger.add(prettyTransport);
+	logger.add(debugFileTransport)
 } else {
 	logger.add(productionTransport)
 }

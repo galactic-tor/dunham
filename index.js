@@ -76,7 +76,9 @@ async function notify(date) {
 async function CheckSite(browser, site) {
     try {
         const page = await browser.newPage();
-        await page.setDefaultNavigationTimeout(60*10*1000) 
+        await page.setRequestInterception(true);
+        page.on('request', requestBlocker(config.blockRequests))
+        await page.setDefaultNavigationTimeout(60*10*1000);
         await page.goto(config.urls.base+config.siteMap[site]);
         await closeModal(page);
         await campsiteListView(page);
@@ -256,6 +258,34 @@ async function checkout(page, name, ccn, cvc, expmon, expyr) {
         return Promise.reject(error)
     }
     
+}
+
+
+function requestBlocker(config) {
+    return function(request) {
+        let url = request.url()
+        if (request.isInterceptResolutionHandled()){
+            logger.debug('request already intercepted', {url});
+            return;
+        } 
+        for (let i = 0; i < config.resourceTypes.length; i++) {
+            let  type = config.resourceTypes[i];
+            if (request.resourceType() === type) {
+                logger.debug('type aborted request', {type, url});
+                request.abort();
+                return;
+            }
+        }
+        for (let i = 0; i < config.contains.length; i++) {
+            let substring = config.contains[i]
+            if ( url.includes(substring) ) {
+                logger.debug('substring aborted request', {substring, url});
+                request.abort();
+                return;
+            }
+        }
+        request.continue();
+    } 
 }
 
 main()
