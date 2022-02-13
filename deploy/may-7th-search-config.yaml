@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: dunham-cron
+  name: may7th-job 
 spec:
   schedule: "*/10 * * * *"
   successfulJobsHistoryLimit: 5
@@ -11,7 +11,7 @@ spec:
       template:
         metadata:
           labels: 
-            name: dunham-cron
+            name: may7th-job 
         spec:
           containers:
             - name: dunham
@@ -39,7 +39,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   labels: 
-    name: dunham-cron
+    name: may7th-job 
   name: may-7th-config
 data:
   sites.json: |
