@@ -11,7 +11,8 @@ spec:
       template:
         metadata:
           labels: 
-            name: feb-19th-job 
+            honeycomb: json
+            name: feb-19th-job
         spec:
           containers:
             - name: dunham
