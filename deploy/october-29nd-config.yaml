@@ -1,0 +1,52 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: dunham-cron
+spec:
+  schedule: "*/10 * * * *"
+  successfulJobsHistoryLimit: 5
+  failedJobsHistoryLimit: 5
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels: 
+            name: dunham-cron
+        spec:
+          containers:
+            - name: dunham
+              image: docker.io/kwyn/dunham:latest
+              imagePullPolicy: IfNotPresent
+              volumeMounts:
+              - name: dunham-dot-env
+                mountPath: "/home/pptruser/workspace/secrets/"
+                readOnly: true
+              - name: oct-29th-config 
+                mountPath: "/home/pptruser/workspace/configmaps/"
+          restartPolicy: Never
+          volumes:
+          - name: dunham-dot-env
+            secret:
+              secretName: dunham.env
+          - name: oct-29th-config 
+            configMap:
+              name: oct-29th-config 
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  labels: 
+    name: dunham-cron
+  name: oct-29th-config 
+data:
+  sites.json: |
+    [
+      "Upper Pines",
+      "Lower Pines",
+      "North Pines"
+    ]
+  dates.json: |
+    {
+      "start": "10/29/2022",
+      "end": "10/30/2022"
+    }

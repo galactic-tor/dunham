@@ -67,9 +67,10 @@ jobs:
         namespace: dunham-dev
         manifests: |
           deploy/sealed-env-dev.yaml
-          deploy/feb-19th-search-config.yaml
-          deploy/may-7th-search-config.yaml
-          deploy/may-14th-search-config.yaml
+          deploy/november-5th-config.yaml
+          deploy/november-12th-config.yaml
+          deploy/october-15th-config.yaml
+          deploy/october-29th-config.yaml
         images: |
           docker.io/kwyn/dunham:${{ github.sha }}
         kubectl-version: 'latest'
