@@ -48,6 +48,7 @@ function main() {
                 site: campsite.site,
                 elements: campsite.availableElements,
             })
+            console.error(error, campsite.availableElements)
             return
 		}
         try {
@@ -71,6 +72,23 @@ async function notify(date) {
     }
     
     return p.send(msg)
+}
+
+async function failureNotification(err, page) {
+    var p = new Push( {
+        user: process.env.PUSHOVER_USER,
+        token: process.env.PUSHOVER_TOKEN,
+    })
+
+    var msg = {
+        message: `Unexpected Scraper Error: ${err}`,
+        title: "🚨 Camp scraper error! 🚨",
+        sound: 'siren',
+        url: page.url
+    }
+
+    return p.send(msg)
+
 }
 
 async function CheckSite(browser, site) {
@@ -110,7 +128,12 @@ function errorCtx(error, ctx) {
 
 async function BookSite(page, siteElements) {
     try {
-        siteElements[0].click()
+        console.log(siteElements[0])
+        await siteElements[0].click()
+        const accessbilityCheck = await page.$x('//button[contains(., "Proceed with Reservation")]', {timeout: 2000})
+        if (!!accessbilityCheck[0]) {
+            await accessbilityCheck[0].click()
+        }
         await login(
             page, 
             process.env.USER_NAME, 
@@ -119,7 +142,8 @@ async function BookSite(page, siteElements) {
         await fillYosCampsiteField(page);
         await checkout(
             page, 
-            process.env.NAME,
+            process.env.FIRSTNAME,
+            process.env.LASTNAME,
             process.env.CCN, 
             process.env.CVC,
             process.env.EXP_MONTH,
@@ -148,11 +172,12 @@ async function closeModal(page) {
 
 async function campsiteListView(page) {
     try {
-        const button = await page.$('#tabs-panel-0 > div.sarsa-stack.md.campsite-list-tab.v2-tab > div.mb-2.grid-header-container > button.sarsa-button.sarsa-button-tertiary.sarsa-button-md')
-        if (!button) {
-            return new Error("No Campsite List View Button Found")
+        // If we select only for Campsite List buttons the tab at the top of the page will be selected
+        const button = await page.$x("//button[contains(., 'Campsite List')][contains(concat(' ',normalize-space(@class),' '),' sarsa-button-tertiary ')]")
+        if (!button || button.length < 1) {
+            throw new Error("No Campsite List View Button Found")
         }
-        await button.click();
+        await button[0].click()
    } catch (error) {
        log.error('campsiteListView failed', errorCtx(error))
        return Promise.reject(error)
@@ -164,7 +189,7 @@ async function setDates(page, start, end) {
         const startField = await page.$('#campground-start-date-calendar')
         const endField =  await page.$('#campground-end-date-calendar')
         if (!startField  || !endField) {
-            return new Error("Could not find start or end date fields")
+            throw new Error("Could not find start or end date fields")
         }
         await startField.click()
         await startField.type(start)
@@ -179,8 +204,8 @@ async function setDates(page, start, end) {
 
 async function findAvailable(page) {
     try {
-        await page.waitForNetworkIdle()
         const selector = '.list-map-book-now-button-tracker'
+        await page.waitForSelector(selector)
         return page.$$(selector)
     } catch (error) {
         log.error('findAvailable failed', errorCtx(error))
@@ -208,14 +233,13 @@ async function login(page, email, pw) {
 
 async function fillYosCampsiteField(page) {
     try {
-        await page.waitForNetworkIdle({timeout:5000})
+        await page.waitForSelector(".rec-order-detail-section-body")
         const groupCount = await page.$('aria/Number of people');
         await groupCount.type("6")
         const tent = await page.$('label.rec-label-checkbox.equip-checkbox.mb-1');
         await tent.click()
         const vehicleCount = await page.$('aria/Number of Vehicles', {timeout: 4000});
         await vehicleCount.type("2")
-        // #page-body > div > section > div > div.flex-col-md-8 > div.order-details-forms-wrapper > section.rec-order-detail-need-to-know.sarsa-need-to-know >
         const needToKnow = await page.$('div.rec-form-check-wrap > label');
         await needToKnow.click()
         const submit = await page.$('#action-bar-submit')
@@ -227,19 +251,27 @@ async function fillYosCampsiteField(page) {
         return Promise.reject()
     }
 }
-async function checkout(page, name, ccn, cvc, expmon, expyr) {
+async function checkout(page, firstname, lastname, ccn, cvc, expmon, expyr) {
     try {
-        const navPromise1 = page.waitForNavigation();
-        const checkoutBtn = await page.$('div.cart-order-summary-actions > button.rec-button-primary-large');
-        await checkoutBtn.click();
+        const checkoutBtnXPath = "//button[contains(., 'Proceed to Payment')]"
+        await page.waitForXPath(checkoutBtnXPath);
+        const checkoutBtns = await page.$x(checkoutBtnXPath)
+        console.log(checkoutBtns)
+        if (!checkoutBtns || checkoutBtns.length < 2) {
+            throw new Error("Failed to find checkout button")
+        }
+        const navPromise1 = page.waitForNavigation()
+        await checkoutBtns[1].click();
         await navPromise1;
-        const nameField = await page.$('input[name="name"]', {timeout: 5000})    
-        await nameField.click()
-        await nameField.type(name)
+        const fnameField = await page.$('input[name="firstname"]', {timeout: 5000})
+        await fnameField.click()
+        await fnameField.type(firstname)
+        const lnameField = await page.$('input[name="lastname"]', {timeout: 5000})
+        await lnameField.click()
+        await lnameField.type(lastname)
         const ccnField = await page.$('input[name="number"]')
         await ccnField.click()
         await ccnField.type(ccn)
-        // #page-body > div > div > div:nth-child(1) > div:nth-child(2) > div.flex-col-md-8 > div > div.flex-col-sm-12.flex-col-lg-6.flex-col-xl-7 > div.flex-grid.rec-cart-form-field > div:nth-child(1) > select
         await page.click('select[name="month"]')
         await page.select('select[name="month"]', expmon)
         await page.click('select[name="year"]')
@@ -247,11 +279,11 @@ async function checkout(page, name, ccn, cvc, expmon, expyr) {
         const cvcField = await page.$('input[name="cvc"]', cvc)
         await cvcField.click()
         await cvcField.type(cvc)
-        // hit the button
+        const nextButton = await page.$x("//button[contains(., 'Next')]")
+        await nextButton[0].click()
+        const confirmButton = await page.$x("//button[contains(., 'Confirm')]")
+        await confirmButton[0].click()
         const navPromise2 = page.waitForNavigation();
-        await page.click('#page-body > div > div > div:nth-child(1) > div:nth-child(2) > div.flex-col-md-8 > div > div.flex-col-sm-12.flex-col-lg-6.flex-col-xl-7 > button')
-        await page.waitForNetworkIdle({timeout:5000})
-        await page.click('.sarsa-button.ml-1.sarsa-button-primary.sarsa-button-md')
         await navPromise2
     } catch (error) {
         log.error('checkout failed', errorCtx(error))
