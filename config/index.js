@@ -29,7 +29,7 @@ config.blockRequests = {
         "events.mapbox.com",
         "doublclick.net",
         "google-analytics.com",
-		"launchdarkly",
+		// "launchdarkly", Without launch darkley the checkout button doesn't work
         "/api/ratingview/",
         "/api/recommendation/",
 	]
