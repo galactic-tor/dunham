@@ -42,8 +42,6 @@ data:
   sites.json: |
     [
       "Upper Pines",
-      "Lower Pines",
-      "North Pines"
     ]
   dates.json: |
     {
